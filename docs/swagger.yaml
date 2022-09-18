@@ -1,0 +1,379 @@
+definitions:
+  controllers.GetTicketInfo:
+    properties:
+      textTime:
+        type: string
+      textsForTicket:
+        type: string
+      ticketMessage:
+        type: string
+      ticketSubject:
+        type: string
+    type: object
+  controllers.GetTicketInfo_input:
+    properties:
+      ticketid:
+        example: "0"
+        type: string
+    required:
+    - ticketid
+    type: object
+  controllers.GetTicketsList_A:
+    properties:
+      hasbeenRead:
+        type: integer
+      ticketId:
+        type: integer
+      ticketsMessage:
+        type: string
+      ticketsSubject:
+        type: string
+    type: object
+  controllers.GetTicketsList_U:
+    properties:
+      hasbeenRead:
+        type: integer
+      ticketID:
+        type: integer
+      ticketMessage:
+        type: string
+      ticketSubject:
+        type: string
+    type: object
+  controllers.MessageForTicketing_input:
+    properties:
+      text:
+        type: string
+      ticketid:
+        example: "0"
+        type: string
+    required:
+    - text
+    - ticketid
+    type: object
+  controllers.Register_Input:
+    properties:
+      captchaCode:
+        type: string
+      captchaId:
+        type: string
+      email:
+        type: string
+      id:
+        example: "0"
+        type: string
+      password:
+        type: string
+      phone:
+        example: "0"
+        type: string
+      username:
+        type: string
+    required:
+    - captchaCode
+    - captchaId
+    - email
+    - id
+    - password
+    - phone
+    - username
+    type: object
+  controllers.Reset_password:
+    properties:
+      newPassword:
+        type: string
+      oldPassword:
+        type: string
+    required:
+    - newPassword
+    - oldPassword
+    type: object
+  controllers.login_input:
+    properties:
+      captchaCode:
+        type: string
+      captchaId:
+        type: string
+      pwd:
+        type: string
+      username:
+        type: string
+    required:
+    - captchaCode
+    - captchaId
+    - pwd
+    - username
+    type: object
+info:
+  contact: {}
+paths:
+  /api/GetTicketInfoA:
+    post:
+      consumes:
+      - application/json
+      description: Respond with Ticket info.
+      parameters:
+      - description: Get token string
+        in: header
+        name: BearerToken
+        required: true
+        type: string
+      - description: GetTicketInfo input body
+        in: body
+        name: GetTicketInfo
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GetTicketInfo_input'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.GetTicketInfo'
+        "400":
+          description: Empty Body
+        "401":
+          description: token in not valid or role is not admin
+        "500":
+          description: Internal Server Error
+  /api/GetTicketInfoU:
+    get:
+      consumes:
+      - application/json
+      description: Respond with User ticket info.
+      parameters:
+      - description: Get token string
+        in: header
+        name: BearerToken
+        required: true
+        type: string
+      - description: GetTicketInfo input body
+        in: body
+        name: GetTicketInfo
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GetTicketInfo_input'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.GetTicketInfo'
+        "400":
+          description: Empty Body
+        "401":
+          description: Token is not valid
+        "500":
+          description: Internal Server Error
+  /api/getTicketsListA:
+    get:
+      consumes:
+      - application/json
+      description: Respond with admins tickets list.
+      parameters:
+      - description: Get token string
+        in: header
+        name: BearerToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.GetTicketsList_A'
+        "401":
+          description: token in not valid or role is not admin
+        "500":
+          description: Internal Server Error
+  /api/getTicketsListU:
+    get:
+      consumes:
+      - application/json
+      description: Respond with users tickets list.
+      parameters:
+      - description: Get token string
+        in: header
+        name: BearerToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.GetTicketsList_U'
+        "401":
+          description: Token is not valid
+        "500":
+          description: Internal Server Error
+  /api/getcaptcha:
+    post:
+      consumes:
+      - application/json
+      description: Get captcha PNG from server.
+      parameters:
+      - description: Get random captcha id
+        in: query
+        name: refId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Captcha image generated
+        "400":
+          description: Empty Body
+        "500":
+          description: Internal Server Error
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Respond with Token string as Json if login was succesfull.
+      parameters:
+      - description: Get token string
+        in: header
+        name: BearerToken
+        required: true
+        type: string
+      - description: Login input body
+        in: body
+        name: LoginInput
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.login_input'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successfull
+          schema:
+            type: string
+        "400":
+          description: Empty Body
+        "401":
+          description: username and password or captcha is not match
+        "408":
+          description: Captcha expired
+        "500":
+          description: Internal Server Error
+  /api/messageForTicketU:
+    post:
+      consumes:
+      - application/json
+      description: Respond with Json body.
+      parameters:
+      - description: Get token string
+        in: header
+        name: BearerToken
+        required: true
+        type: string
+      - description: MessageForTicketing input body
+        in: body
+        name: MessageForTicketing
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MessageForTicketing_input'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succesfully message saved
+        "400":
+          description: Empty Body
+        "401":
+          description: token in not valid or role is not admin
+        "500":
+          description: Internal Server Error
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: user registration.
+      parameters:
+      - description: Register input body
+        in: body
+        name: RegisterInput
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.Register_Input'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '0: This Id is already registered , 1: This Username is already
+            registered , 2: Register was successfull'
+        "400":
+          description: Empty Body
+        "408":
+          description: Captcha expired
+  /api/resetpassword:
+    post:
+      consumes:
+      - application/json
+      description: Changes the user's password.
+      parameters:
+      - description: Get token string
+        in: header
+        name: BearerToken
+        required: true
+        type: string
+      - description: Reset Password Body
+        in: body
+        name: ResetPasswordInput
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.Reset_password'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: password was successfully changed
+        "400":
+          description: Empty Body
+        "401":
+          description: Invalid password for user
+        "500":
+          description: Internal server error
+  /api/ticketing:
+    post:
+      consumes:
+      - application/json
+      description: Get user's Message.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message was successfully received
+        "400":
+          description: Empty Body
+        "401":
+          description: Null token
+        "500":
+          description: Problem in saving message
+  /api/tokenValidation:
+    post:
+      consumes:
+      - application/json
+      description: Respond with user information such as username, SSN, Role, Email
+        and phone.
+      parameters:
+      - description: Get token string
+        in: header
+        name: BearerToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token is valid
+        "401":
+          description: Invalid token
+swagger: "2.0"
